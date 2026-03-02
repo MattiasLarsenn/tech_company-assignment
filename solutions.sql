@@ -162,3 +162,44 @@ HAVING number_of_employees > 3;
 SELECT employee_name, salary
 FROM employees
 WHERE salary > (SELECT AVG(salary) FROM employees);
+
+-- Join Table (Many-to-many)
+
+-- 1. Create a new table called leaders and insert rows into it.
+
+CREATE table leaders(
+    leader_id INT PRIMARY KEY,
+    leader_name VARCHAR(100)
+);
+INSERT INTO leaders VALUES (1, 'SMITH');
+INSERT INTO leaders VALUES (2, 'JOHNSON');
+INSERT INTO leaders VALUES (3, 'WILLIAMS');
+INSERT INTO leaders VALUES (4, 'BROWN');
+INSERT INTO leaders VALUES (5, 'DAVIS');
+
+-- 2. Create a new table called employees_leaders that should link the employees and leaders tables. This is called a join table. It will enable you to create a many-to-many relationship between employees and leaders
+
+CREATE TABLE employees_leaders (
+    employee_number INT,
+    leader_id INT,
+    PRIMARY KEY (employee_number, leader_id),
+    FOREIGN KEY (employee_number)
+    REFERENCES employees(employee_number),
+    FOREIGN KEY (leader_id)
+    REFERENCES leaders(leader_id));
+
+-- 3. Create rows in employees_leaders that link employees to their respective leaders.
+
+INSERT into employees_leaders VALUES (7499, 2);
+INSERT into employees_leaders VALUES (7521, 3);
+INSERT into employees_leaders VALUES (7566, 4);
+INSERT into employees_leaders VALUES (7654, 5);
+
+--4. Create a many-to-many query between employees and leaders. It requires two JOIN statements. First you select from employees, then you join with employees_leaders, and finally you join again with leaders.
+
+SELECT employee_name, leader_name
+FROM employees
+JOIN employees_leaders
+ON employees.employee_number = employees_leaders.employee_number
+JOIN leaders
+ON employees_leaders.leader_id = leaders.leader_id;
