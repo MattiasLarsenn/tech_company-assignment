@@ -103,4 +103,62 @@ ORDER BY best_paid DESC;
 SELECT SUM(salary) + SUM(ifnull(commission, 0)) AS total_income
 FROM employees;
 
+-- JOIN Assignments
 
+-- 1. Create an INNER JOIN between employees and departments to get the department name for each employee. Show all columns.
+
+SELECT *
+FROM employees
+JOIN departments
+ON employees.department_number = departments.department_number;
+
+-- 2. Continue from the last task. Show two columns. The employee_name and their corresponding department_name. Oh, and can you sort them alphabetically (A-Z)?
+
+SELECT employee_name, department_name
+FROM employees
+INNER JOIN departments
+ON employees.department_number = departments.department_number
+ORDER BY employee_name;
+
+-- 3. Now is the time to make a LEFT JOIN. Let's look at employee_name and department_name only. There is one more person this time who didn't show in the previous query. Who is it and why?
+
+SELECT employee_name, department_name
+FROM employees
+LEFT JOIN departments
+ON employees.department_number = departments.department_number
+ORDER BY employee_name;
+
+-- Det er King der dukker op, han dukkede ikke op før fordi han ikke har et department number, som er det vi joiner dem på, men fordi vi laver left join, tager den alt med employees og putter det i resultat alligevel.
+
+-- 4. One department is missing. Which one and why? (Look in the database).
+
+-- Det er OPERATIONS, da der er en ingen employee som har department nummer 40, som er det nummer OPERATIONS har, man ville skulle bruge RIGHT JOIN, for at få den med.
+
+-- 5. To get the missing department change the previous query to use a RIGHT JOIN.
+
+-- Se ovenstående.
+
+-- 6. SCOTT sends you this query and asks you to run it. In order to assess whether it is information that SCOTT is privy to, you must first understand it. Describe in technical terms what this query does:
+
+-- Den giver et resultat som er et par af employees og deres manager, altså hvis employee manager ID passer en employee ID, så skal den med i resultat, og det bliver vist alfabetisk i employee name.
+
+-- 7. Get two columns: employees and their managers.
+
+SELECT employee.employee_name AS employee,
+        manager.employee_name AS manager
+FROM employees employee
+JOIN employees manager
+ON employee.manager_id = manager.employee_number;
+
+-- 8. Use the HAVING keyword (feel free to look it up) to show the departments with more than 3 employees. 
+
+SELECT employees.department_number, COUNT(employees.department_number) as number_of_employees
+FROM employees
+GROUP BY department_number
+HAVING number_of_employees > 3;
+
+-- 9. Subquery time! Select the name and salary of employees whose salary is above average: WHERE salary > (SELECT AVG(salary) FROM employees)
+
+SELECT employee_name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
